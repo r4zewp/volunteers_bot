@@ -1,5 +1,8 @@
 from loader import *
 
+# database
+from config.database import user_queries as uq
+
 # handlers
 ## user
 from handlers.user import profile_handler
@@ -16,24 +19,39 @@ from keyboards.start_markup_logged import start_markup_logged
 # config
 from config.strings import *
 
-
-
-@dp.message(CommandStart())
-async def command_start_handler(message: Message) -> None:
+@user_router.message(CommandStart())
+async def command_start_handler(message: Message, conn: any) -> None:
     # Должна быть проверка на существование пользователя
     # в базе данных
     #
     # Пока допускаем, что пользователь уже существует
     # # Далее должна идти проверка на пользователя -> дальше понять, как
     # # мб сторить глобально тип пользователя, чтобы постоянно не обращаться к БД
-    await bot.send_message(chat_id=message.from_user.id, 
-                           text=greetings,
-                           reply_markup=start_markup_logged())
+    user = await uq.get_user(conn, message.chat.id)
 
-@dp.message()
+    if user:
+        print(user)
+        await bot.send_message(chat_id=message.from_user.id, 
+                        text=greetings,
+                        reply_markup=start_markup_logged())
+    else:
+        print('asd')
+        await bot.send_message(chat_id=message.from_user.id, text="NOT EXIST")
+
+@user_router.message()
 async def handle_unknown(message: Message) -> None:
     await bot.send_message(chat_id=message.chat.id,
                            text=unknown)
+
+async def main(): 
+    dp = Dispatcher()
+
+    dp.include_router(user_router)
+
+    pool = await database.create_pool()
+    user_router.message.middleware(middleware.DbMiddleware(pool))
+    
+    await dp.start_polling(bot)
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
