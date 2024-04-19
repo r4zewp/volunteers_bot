@@ -24,6 +24,8 @@ async def command_start_handler(message: Message) -> None:
     # в базе данных
     #
     # Пока допускаем, что пользователь уже существует
+    # # Далее должна идти проверка на пользователя -> дальше понять, как
+    # # мб сторить глобально тип пользователя, чтобы постоянно не обращаться к БД
     await bot.send_message(chat_id=message.from_user.id, 
                            text=greetings,
                            reply_markup=start_markup_logged())
