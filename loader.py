@@ -15,6 +15,8 @@ from aiogram.filters import CommandStart, CommandObject, Command, MagicData
 from aiogram import F
 from aiogram.types import Message
 from config import middleware
+from aiogram.fsm.context import FSMContext
+from state_groups.Signup import *
 
 from config.routers.user_router import user_router
 
