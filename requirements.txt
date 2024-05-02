@@ -21,3 +21,4 @@ python-dotenv==1.0.1
 six @ file:///AppleInternal/Library/BuildRoots/9dd5efe2-7fad-11ee-b588-aa530c46a9ea/Library/Caches/com.apple.xbs/Sources/python3/six-1.15.0-py2.py3-none-any.whl
 typing_extensions==4.11.0
 yarl==1.9.4
+peewee==3.17.3
