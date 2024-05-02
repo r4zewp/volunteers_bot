@@ -15,6 +15,7 @@ idna==3.7
 macholib @ file:///AppleInternal/Library/BuildRoots/9dd5efe2-7fad-11ee-b588-aa530c46a9ea/Library/Caches/com.apple.xbs/Sources/python3/macholib-1.15.2-py2.py3-none-any.whl
 magic-filter==1.0.12
 multidict==6.0.5
+peewee==3.17.3
 pydantic==2.5.3
 pydantic_core==2.14.6
 python-dotenv==1.0.1
