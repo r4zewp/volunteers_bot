@@ -9,6 +9,7 @@ from config.cache.redis import get_redis
 from handlers.user import profile_handler
 from handlers.user import grades_handler
 from handlers.user import projects_handler
+from handlers.user import signup_handler
 
 ## admin
 
@@ -18,7 +19,6 @@ from handlers.user import projects_handler
 from keyboards.start_markup_logged import start_markup_logged
 from keyboards.start_markup_new import start_markup_new
 
-from aiogram.types import ReplyKeyboardRemove
 
 # config
 from config.strings import *
@@ -61,25 +61,7 @@ async def command_start_handler(message: Message, conn: any, state: FSMContext) 
     except Exception as e:
         print(e)
     
-@user_router.message(Signup.phone, F.content_type.in_({'contact'}))
-async def handle_phone(message: Message, state: FSMContext):
-    await state.update_data(phone=message.contact.phone_number)
-    await state.update_data(username= message.from_user.username if message.from_user.username else "-")
-    await state.set_state(Signup.name)
-    await bot.send_message(text='Отлично, отправьте полное имя (Включая отчество, если есть)',
-                           chat_id=message.chat.id,
-                           reply_markup=ReplyKeyboardRemove())
-
-@user_router.message(Signup.name, F.content_type.in_({'text'}))
-async def handle_name(message: Message, state: FSMContext):
-    # мб нужно добавить проверку на ввод всякой хуйни
-    await state.update_data(name=message.text)
-    data = await state.get_data()
-    await message.reply('Name is ready' + data["name"])
-
-@user_router.message(Signup.phone, F.content_type.is_not({'text'}))
-async def handle_name_wrong(message: Message, state: FSMContext):
-    await message.reply(text="Я не понимаю такого")
+# handling unknown messages
 
 @user_router.message()
 async def handle_unknown(message: Message) -> None:
