@@ -51,6 +51,7 @@ async def command_start_handler(message: Message, conn: any, state: FSMContext) 
                                 text=f"{greetings_name} {html.bold(user['user']['username'])}!\n\n{greetings_action}",
                                 reply_markup=start_markup_logged())
                 await redis.close()
+                
         # # если нет, то отправляем по процессу регистрации
             else:
                 await state.set_state(Signup.phone)

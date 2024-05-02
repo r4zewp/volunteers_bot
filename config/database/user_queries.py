@@ -16,12 +16,12 @@ async def get_user(conn, id):
 async def create_user(conn, phone_num, username, tg_id):
 
     query = """
-    INSERT INTO users (phone_number, username, telegram_user_id)
-    VALUES ($1, $2, $3);
-    RETURNING id;
+    INSERT INTO public.user (phone_number, username, telegram_user_id)
+    VALUES ($1, $2, $3)
+    RETURNING id
     """
     
-    user_id = await conn.fetchval(query, phone_num, username, tg_id)
+    user_id = await conn.fetch(query, phone_num, username, tg_id)
     
     await conn.close()
 
@@ -35,11 +35,11 @@ async def create_volunteer(conn, uid, vol_info:dict):
     if (user):
 
         query = """
-        INSERT INTO volunteers (user_id, name, surename, middlename, education_type, education_program, course_number)
+        INSERT INTO public.volunteer (user_id, name, surename, middlename, education_type, education_program, course_number)
         VALUES ($1, $2, $3, $4, $5, $6, $7)
         RETURNING v_id
         """
-        volunteer_id = await conn.fetchval(query, uid, vol_info['name'], vol_info['surename'],
+        volunteer_id = await conn.fetch(query, uid, vol_info['name'], vol_info['surname'],
                             vol_info['middlename'], vol_info['education_type'], vol_info['education_program'],
                             vol_info['course_number'])
         await conn.close()
