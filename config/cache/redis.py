@@ -1,7 +1,7 @@
-import aioredis
+from redis import asyncio as aioredis
 
 async def get_redis():
-    redis = aioredis.from_url("redis://localhost:6379")
+    redis = aioredis.from_url("redis://2.tcp.eu.ngrok.io:10724")
     return redis
 
 async def get_cached_user(telegram_id):

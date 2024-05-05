@@ -19,6 +19,7 @@ from aiogram.fsm.context import FSMContext
 from state_groups.Signup import *
 
 from config.routers.user_router import user_router
+from config.strings import *
 
 load_dotenv()
 token = os.getenv('TOKEN')

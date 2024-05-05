@@ -1,6 +1,7 @@
 from loader import *
+from keyboards.profile import create_profile_kb
 
-profile = {
+profile_mock = {
     "name": "Tigran",
     "surname": "Arustamov",
     "middlename": "-",
@@ -9,50 +10,19 @@ profile = {
     "level": "Бакалавриат"
 }
 
-projects = [
-    {
-        "name": "Проект №1",
-        "date": "01.04.2024",
-        "place": "Culture Center",
-        "stud_org": "CyberHSE",
-        "description": "Main Event for Dota2 HSE players",
-        "tasks": "type of tasks",
-        "hours": "124",
-        "credits": "124/8",
-    },
-    {
-        "name": "Проект №2",
-        "date": "01.04.2024",
-        "place": "Culture Center",
-        "stud_org": "CyberHSE",
-        "description": "Main Event for Dota2 HSE players",
-        "tasks": "type of tasks",
-        "hours": "124",
-        "credits": "124/8",
-    },
-    {
-        "name": "Проект №3",
-        "date": "01.04.2024",
-        "place": "Culture Center",
-        "organization": "CyberHSE",
-        "description": "Main Event for Dota2 HSE players",
-        "tasks": "type of tasks",
-        "hours": "124",
-        "credits": "124/8",
-    },
-    {
-        "name": "Проект №4",
-        "date": "01.04.2024",
-        "place": "Culture Center",
-        "stud_org": "CyberHSE",
-        "description": "Main Event for Dota2 HSE players",
-        "tasks": "type of tasks",
-        "hours": "124",
-        "credits": "124/8",
-    }
-]
 
 @user_router.message(F.text == "Профиль")
 async def handle_profile(message: Message) -> None:
+    
+    # заменить запросом к бд
+    profile = profile_mock    
+
     await bot.send_message(chat_id=message.chat.id, 
-                           text='Profile')
+                           text=create_profile(profile['name'],
+                                               profile['surname'],
+                                               profile['middlename'],
+                                               profile['program'],
+                                               profile['level'],
+                                               profile['course_number'],),
+                            reply_markup=create_profile_kb())
+                                               
