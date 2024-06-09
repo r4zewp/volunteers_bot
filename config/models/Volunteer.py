@@ -1,9 +1,10 @@
-from peewee import Model, CharField, IntegerField, AutoField, BigIntegerField
+from peewee import Model, CharField, IntegerField, AutoField, BigIntegerField, ForeignKeyField
 from database import db
+from models.User import User
 
 class Volunteer(Model):
     v_id = AutoField()
-    user_id = IntegerField()
+    user = ForeignKeyField(User, backref='volunteers')
     name = CharField()
     surename = CharField()
     middlename = CharField()
