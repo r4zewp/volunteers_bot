@@ -1,4 +1,4 @@
-from peewee import Model, CharField, IntegerField, AutoField, BigIntegerField, DateField, TextField
+from peewee import Model, CharField, IntegerField, AutoField, BigIntegerField, DateField, TextField, BooleanField
 from database import db
 
 class Event(Model):
@@ -12,6 +12,7 @@ class Event(Model):
     organization = CharField()
     hours_amount = IntegerField()
     part_format = TextField()
+    active = BooleanField()
 
     class Meta:
         database = db  # Использует базу данных, указанную в database.py
