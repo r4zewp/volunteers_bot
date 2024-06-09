@@ -1,5 +1,6 @@
-from peewee import Model, CharField, IntegerField, AutoField, BigIntegerField, DateField, TextField, BooleanField
+from peewee import Model, CharField, IntegerField, AutoField, BigIntegerField, DateField, TextField, BooleanField, ForeignKeyField
 from database import db
+from models import Event, Volunteer
 
 class Event_X_Volunteer(Model):
     id = AutoField()
