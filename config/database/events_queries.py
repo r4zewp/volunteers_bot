@@ -2,7 +2,7 @@ import asyncpg
 from models import Event
 from database import objects
 
-async def get_active_events():
+async def get_active_events(*, objects):
     try:
         events = await objects.execute(Event.select().where(Event.active == True))
         return events
@@ -11,7 +11,7 @@ async def get_active_events():
         return None
 
 # Асинхронная функция для обновления события по id
-async def update_event(event_id, name=None, description=None, is_active=None):
+async def update_event(event_id, name=None, description=None, is_active=None, *, objects):
     try:
         event = await objects.get(Event, Event.e_id == event_id)
         if name is not None:

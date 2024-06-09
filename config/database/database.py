@@ -20,4 +20,15 @@ async def create_pool():
     )
     objects = peewee_async.Manager(db)
     return objects
+db = PostgresqlDatabase(
+    'postgres',
+    user=pg_user,
+    password=pg_pw,
+    host='167.172.99.57',
+    port=5432
+)
+objects = peewee_async.Manager(db)
+
+async def create_pool():
+    return db, objects
 
