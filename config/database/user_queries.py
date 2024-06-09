@@ -2,9 +2,8 @@ from config.models.User import User
 from config.models.Volunteer import Volunteer
 from peewee_async import Manager
 
-
 # Асинхронная функция для добавления пользователя
-async def add_user(username, phone_number, telegram_id, objects):
+async def add_user(username, phone_number, telegram_id):
     try:
         # Создание нового пользователя и сохранение его в базе данных
         user = await objects.create(User, username=username, phone_number=phone_number, telegram_user_id=telegram_id)
