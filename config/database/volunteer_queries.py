@@ -34,15 +34,6 @@ async def get_volunteer_by_id(v_id):
         print(f"Error: {e}")
         return None
 
-async def get_volunteer_by_user_id(user_id) -> Volunteer:
-    try:
-        volunteer = await objects.get(Volunteer, Volunteer.user_id == user_id)
-        return volunteer
-    except Volunteer.DoesNotExist:
-        return None
-    except Exception as e:
-        return None
-
 # Асинхронная функция для получения всех волонтеров
 async def get_all_volunteers():
     try:
@@ -54,7 +45,7 @@ async def get_all_volunteers():
 
 
 # Асинхронная функция для получения волонтера по ID пользователя
-async def get_volunteer_by_user_id(user_id):
+async def get_volunteer_by_user_id(user_id) -> Volunteer:
     try:
         user = await objects.get(User, User.id == user_id)
         volunteer = await objects.get(Volunteer, Volunteer.user == user)
