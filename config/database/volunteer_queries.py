@@ -4,7 +4,7 @@ from models import Volunteer
 from user_queries import get_user_by_id
 from database import objects
 
-async def create_volunteer(uid, vol_info: dict):
+async def create_volunteer(uid, vol_info: dict, *, objects):
     user = await get_user_by_id(uid)
 
     if user is not None:
@@ -23,7 +23,7 @@ async def create_volunteer(uid, vol_info: dict):
         return None
 
 # Асинхронная функция для получения волонтера по ID
-async def get_volunteer_by_id(v_id):
+async def get_volunteer_by_id(v_id, *, objects):
     try:
         volunteer = await objects.get(Volunteer, Volunteer.v_id == v_id)
         return volunteer
