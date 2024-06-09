@@ -22,6 +22,7 @@ from keyboards.start_markup_new import start_markup_new
 
 # config
 from config.strings import *
+from config.database.database import create_pool
 
 @user_router.message(CommandStart())
 async def command_start_handler(message: Message, conn: any, state: FSMContext) -> None:
@@ -71,14 +72,13 @@ async def handle_unknown(message: Message) -> None:
 
 async def main(): 
     dp = Dispatcher()
-
     dp.include_router(user_router)
-
-    pool = await database.create_pool()
-    user_router.message.middleware(middleware.DbMiddleware(pool))
-    
+    db = await create_pool()
+    user_router.message.middleware(middleware.DbMiddleware(db))
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+    logging.basicConfig(level=logging.DEBUG, 
+                        stream=sys.stdout,
+                        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',)
     asyncio.run(main())
