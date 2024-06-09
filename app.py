@@ -36,9 +36,11 @@ async def command_start_handler(message: Message, db: any, objects: any, state: 
         cached_user = await redis.get(user_key)
 
         if cached_user:
-            decoded = cached_user.decode('utf-8')
-            await bot.send_message(chat_id=message.chat.id,
-                                   text=decoded)
+            user = await uq.get_user_by_id(message.chat.id, objects=objects)
+            print(user)
+            await bot.send_message(chat_id=message.from_user.id, 
+                                text=f"{greetings_name} {html.bold(user)}!\n\n{greetings_action}",
+                                reply_markup=start_markup_logged())
             await redis.close()
 
         # если нет, то смотрим, есть ли такой юзер в бд
@@ -48,9 +50,9 @@ async def command_start_handler(message: Message, db: any, objects: any, state: 
             if user:
                 await redis.setex(user_key, 9999, message.chat.id)
                 await bot.send_message(chat_id=message.from_user.id, 
-                                text=f"{greetings_name} {html.bold(user['user']['username'])}!\n\n{greetings_action}",
+                                text=f"{greetings_name} {html.bold(user)}!\n\n{greetings_action}",
                                 reply_markup=start_markup_logged())
-                await redis.close()
+                
                 
         # # если нет, то отправляем по процессу регистрации
             else:
