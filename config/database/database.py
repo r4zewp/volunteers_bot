@@ -11,7 +11,7 @@ pg_pw = os.getenv('PG_PASSWORD')
 pg_db = os.getenv('PG_DATABASE')
 
 async def create_pool():
-    db = await PostgresqlDatabase(
+    db = await peewee_async.PostgresqlDatabase(
         'postgres',
         user=pg_user,
         password=pg_pw,
