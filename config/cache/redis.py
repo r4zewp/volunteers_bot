@@ -9,7 +9,7 @@ async def get_cached_user(telegram_id):
     
     redis = await get_redis()
     user = redis.get(user_key)
-
+    
     if (user):
         await redis.close()
         return user.decode('utf-8')

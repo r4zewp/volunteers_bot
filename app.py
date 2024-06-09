@@ -19,12 +19,12 @@ from handlers.user import signup_handler
 from keyboards.start_markup_logged import start_markup_logged
 from keyboards.start_markup_new import start_markup_new
 
-
 # config
 from config.strings import *
+from config.database.database import create_pool
 
 @user_router.message(CommandStart())
-async def command_start_handler(message: Message, conn: any, state: FSMContext) -> None:
+async def command_start_handler(message: Message, db: any, objects: any, state: FSMContext) -> None:
     
     try:  
         # формируем ключ пользователя для редиса
@@ -44,7 +44,7 @@ async def command_start_handler(message: Message, conn: any, state: FSMContext) 
         # если нет, то смотрим, есть ли такой юзер в бд
         # если есть, закидываем в кэш и делаем дела дальше
         else:
-            user = await uq.get_user(conn, message.chat.id)
+            user = await uq.get_user_by_id(message.chat.id, )
             if user:
                 await redis.setex(user_key, 9999, message.chat.id)
                 await bot.send_message(chat_id=message.from_user.id, 
@@ -71,14 +71,13 @@ async def handle_unknown(message: Message) -> None:
 
 async def main(): 
     dp = Dispatcher()
-
     dp.include_router(user_router)
-
-    pool = await database.create_pool()
-    user_router.message.middleware(middleware.DbMiddleware(pool))
-    
+    db, objects = await create_pool()
+    user_router.message.middleware(middleware.DbMiddleware(db=db, objects=objects))
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO, stream=sys.stdout)
+    logging.basicConfig(level=logging.DEBUG, 
+                        stream=sys.stdout,
+                        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',)
     asyncio.run(main())
