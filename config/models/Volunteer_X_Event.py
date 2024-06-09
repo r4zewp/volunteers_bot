@@ -3,7 +3,7 @@ from database import db
 from models.Event import Event
 from models.Volunteer import Volunteer
 
-class Event_X_Volunteer(Model):
+class Volunteer_X_Event(Model):
     id = AutoField()
     event = ForeignKeyField(Event, backref='volunteers')
     volunteer = ForeignKeyField(Volunteer, backref='events')
