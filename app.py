@@ -44,7 +44,7 @@ async def command_start_handler(message: Message, db: any, objects: any, state: 
         # если нет, то смотрим, есть ли такой юзер в бд
         # если есть, закидываем в кэш и делаем дела дальше
         else:
-            user = await uq.get_user_by_id(message.chat.id, )
+            user = await uq.get_user_by_id(message.chat.id, objects=objects)
             if user:
                 await redis.setex(user_key, 9999, message.chat.id)
                 await bot.send_message(chat_id=message.from_user.id, 

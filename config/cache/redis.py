@@ -1,7 +1,13 @@
 from redis import asyncio as aioredis
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+redis_url = os.getenv('REDIS_URL')
 
 async def get_redis():
-    redis = aioredis.from_url("redis://2.tcp.eu.ngrok.io:10724")
+    redis = aioredis.from_url(redis_url)
     return redis
 
 async def get_cached_user(telegram_id):
