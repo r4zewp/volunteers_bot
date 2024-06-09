@@ -2,6 +2,7 @@ from loader import *
 
 # database
 from config.database import user_queries as uq
+from config.database import volunteer_queries as vq
 from config.cache.redis import get_redis
 
 # handlers
@@ -37,10 +38,26 @@ async def command_start_handler(message: Message, db: any, objects: any, state: 
 
         if cached_user:
             user = await uq.get_user_by_id(message.chat.id, objects=objects)
-            print(user)
-            await bot.send_message(chat_id=message.from_user.id, 
-                                text=f"{greetings_name} {html.bold(user)}!\n\n{greetings_action}",
-                                reply_markup=start_markup_logged())
+            
+            if user:
+                
+                volunteer = await vq.get_volunteer_by_user_id(user.id)
+                
+                if volunteer:
+                    await bot.send_message(chat_id=message.from_user.id, 
+                                    text=f"{greetings_name} {html.bold(volunteer)}!\n\n{greetings_action}",
+                                    reply_markup=start_markup_logged())
+                else:
+                    await state.set_state(Signup.phone)
+                    await bot.send_message(chat_id=message.from_user.id, 
+                                       text=greetings_new,
+                                       reply_markup=start_markup_new())
+            else:
+                await state.set_state(Signup.phone)
+                await bot.send_message(chat_id=message.from_user.id, 
+                                       text=greetings_new,
+                                       reply_markup=start_markup_new())
+            
             await redis.close()
 
         # если нет, то смотрим, есть ли такой юзер в бд
@@ -48,10 +65,20 @@ async def command_start_handler(message: Message, db: any, objects: any, state: 
         else:
             user = await uq.get_user_by_id(message.chat.id, objects=objects)
             if user:
-                await redis.setex(user_key, 9999, message.chat.id)
-                await bot.send_message(chat_id=message.from_user.id, 
-                                text=f"{greetings_name} {html.bold(user)}!\n\n{greetings_action}",
-                                reply_markup=start_markup_logged())
+
+                volunteer = await vq.get_volunteer_by_id()
+
+                if volunteer:
+                    await redis.setex(user_key, 9999, message.chat.id)
+                    await bot.send_message(chat_id=message.from_user.id, 
+                                    text=f"{greetings_name} {html.bold(volunteer)}!\n\n{greetings_action}",
+                                    reply_markup=start_markup_logged())
+                    
+                else:
+                    await state.set_state(Signup.phone)
+                    await bot.send_message(chat_id=message.from_user.id, 
+                                       text=greetings_new,
+                                       reply_markup=start_markup_new())
                 
                 
         # # если нет, то отправляем по процессу регистрации

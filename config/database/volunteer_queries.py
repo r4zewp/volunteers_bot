@@ -1,8 +1,8 @@
 import asyncpg
-from models.User import User
-from models.Volunteer import Volunteer
-from user_queries import get_user_by_id
-from database import objects
+from config.models.User import User
+from config.models.Volunteer import Volunteer
+from config.database.user_queries import get_user_by_id
+from config.database.database import objects
 
 async def create_volunteer(uid, vol_info: dict):
     user = await get_user_by_id(uid)
@@ -32,6 +32,15 @@ async def get_volunteer_by_id(v_id):
         return None
     except Exception as e:
         print(f"Error: {e}")
+        return None
+
+async def get_volunteer_by_user_id(user_id) -> Volunteer:
+    try:
+        volunteer = await objects.get(Volunteer, Volunteer.user_id == user_id)
+        return volunteer
+    except Volunteer.DoesNotExist:
+        return None
+    except Exception as e:
         return None
 
 # Асинхронная функция для получения всех волонтеров
