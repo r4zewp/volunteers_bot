@@ -1,5 +1,5 @@
 from peewee import Model, CharField, IntegerField, AutoField, BigIntegerField
-from database import db
+from config.database.database import db
 
 class Volunteer(Model):
     v_id = AutoField()

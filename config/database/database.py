@@ -3,7 +3,6 @@ from dotenv import load_dotenv
 import asyncpg
 from peewee import PostgresqlDatabase
 
-
 load_dotenv()
 
 pg_user = os.getenv('PG_USER')
@@ -14,11 +13,11 @@ db = PostgresqlDatabase('postgres@4.tcp.eu.ngrok.io', user=pg_user, password=pg_
 
 async def create_pool():
     return await PostgresqlDatabase(
-        'postgres@2.tcp.eu.ngrok.io',
+        'postgres@167.172.99.57',
         user=pg_user,
         password=pg_pw,
-        host='2.tcp.eu.ngrok.io',
-        port='17785'
+        host='167.172.99.57',
+        port='22'
     )
 
 

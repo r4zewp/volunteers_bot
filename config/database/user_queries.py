@@ -1,6 +1,6 @@
 import asyncpg
-from models import User
-from models import Volunteer
+from config.models import User
+from config.models import Volunteer
 
 # async def get_user(conn, id):
 #     query = f"SELECT username FROM public.user WHERE telegram_user_id = $1;"
@@ -54,7 +54,7 @@ async def create_volunteer(uid, vol_info:dict):
 
     if (user != None):
 
-        volunteer = await 
+        # volunteer = await 
 
         return
     
