@@ -51,3 +51,22 @@ async def get_all_volunteers():
     except Exception as e:
         print(f"Error: {e}")
         return None
+
+
+# Асинхронная функция для получения волонтера по ID пользователя
+async def get_volunteer_by_user_id(user_id):
+    try:
+        user = await objects.get(User, User.id == user_id)
+        volunteer = await objects.get(Volunteer, Volunteer.user == user)
+        # Выводим все поля волонтера для проверки
+        print(f"VOLUNTEER**** ID: {volunteer.v_id}, Name: {volunteer.name}, Surname: {volunteer.surename}, Middlename: {volunteer.middlename}, Education Type: {volunteer.education_type}, Education Program: {volunteer.education_programm}, Course Number: {volunteer.course_number}")
+        return volunteer
+    except User.DoesNotExist:
+        print("User does not exist.")
+        return None
+    except Volunteer.DoesNotExist:
+        print("Volunteer does not exist.")
+        return None
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
