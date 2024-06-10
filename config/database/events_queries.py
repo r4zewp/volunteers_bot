@@ -1,8 +1,7 @@
 import asyncpg
-from models.Event import Event
-from database import objects
+from config.models.Event import Event
 
-async def get_active_events():
+async def get_active_events(objects) -> list[Event] | None:
     try:
         events = await objects.execute(Event.select().where(Event.active == True))
         return events
@@ -11,7 +10,7 @@ async def get_active_events():
         return None
 
 # Асинхронная функция для обновления события по id
-async def update_event(event_id, name=None, description=None, is_active=None):
+async def update_event(event_id, objects, name=None, description=None, is_active=None):
     try:
         event = await objects.get(Event, Event.e_id == event_id)
         if name is not None:
@@ -30,7 +29,7 @@ async def update_event(event_id, name=None, description=None, is_active=None):
         return None
     
     # Асинхронная функция для создания нового события
-async def create_event(event_info: dict):
+async def create_event(event_info: dict, objects):
     try:
         event = await objects.create(
             Event,
