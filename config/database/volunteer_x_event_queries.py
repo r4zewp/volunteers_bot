@@ -41,6 +41,20 @@ async def approve_volunteer_on_event(vxe_id):
         print(f"Error: {e}")
         return None
     
+# Асинхронная функция для отказа волонтеру на событии
+async def decline_volunteer_on_event(vxe_id):
+    try:
+        volunteer_x_event = await objects.get(Volunteer_X_Event, Volunteer_X_Event.vxe_id == vxe_id)
+        volunteer_x_event.approved = False
+        await objects.update(volunteer_x_event)
+        return volunteer_x_event
+    except Volunteer_X_Event.DoesNotExist:
+        print(f"Volunteer_X_Event with ID {vxe_id} does not exist.")
+        return None
+    except Exception as e:
+        print(f"Error: {e}")
+        return None
+    
 # Асинхронная функция для изменения значения свойства hours_credited
 async def update_hours_credited(vxe_id, new_hours_credited):
     try:
