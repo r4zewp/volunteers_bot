@@ -10,6 +10,6 @@ def create_profile(name, surname, middlename, program, level, course):
     return f"{html.bold(f'{name} {surname} {middlename}')}\n\n" \
     f"{html.bold(f'Уровень образования: ')}{level}\n" \
     f"{html.bold(f'Образовательная программа (ОП): ')}{program}\n" \
-    f"{html.bold(f'Номер курса: ')}\n{course}" \
-    f"{html.bold(f'Количество кредитов: ')}\nNaN" \
+    f"{html.bold(f'Номер курса: ')}{course}\n" \
+    f"{html.bold(f'Количество кредитов: ')}0" \
     

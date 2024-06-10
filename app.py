@@ -4,6 +4,10 @@ from loader import *
 from config.database import user_queries as uq
 from config.database import volunteer_queries as vq
 from config.cache.redis import get_redis
+from config.models.User import User
+from config.models.Volunteer import Volunteer
+from config.models.Event import Event
+from config.models.Volunteer_X_Event import Volunteer_X_Event
 
 # handlers
 ## user
@@ -41,7 +45,7 @@ async def command_start_handler(message: Message, db: any, objects: any, state: 
             
             if user:
                 
-                volunteer = await vq.get_volunteer_by_user_id(user.id)
+                volunteer = await vq.get_volunteer_by_user_id(user.id, objects=objects)
                 
                 if volunteer:
                     await bot.send_message(chat_id=message.from_user.id, 
@@ -66,7 +70,7 @@ async def command_start_handler(message: Message, db: any, objects: any, state: 
             user = await uq.get_user_by_id(message.chat.id, objects=objects)
             if user:
 
-                volunteer = await vq.get_volunteer_by_id()
+                volunteer = await vq.get_volunteer_by_user_id(user.id, objects)
 
                 if volunteer:
                     await redis.setex(user_key, 9999, message.chat.id)
@@ -102,6 +106,10 @@ async def main():
     dp = Dispatcher()
     dp.include_router(user_router)
     db, objects = await create_pool()
+
+    with db:
+        db.create_tables([User, Volunteer, Event, Volunteer_X_Event])
+
     user_router.message.middleware(middleware.DbMiddleware(db=db, objects=objects))
     await dp.start_polling(bot)
 
