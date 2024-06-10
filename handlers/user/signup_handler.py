@@ -9,10 +9,11 @@ from aiogram.types import CallbackQuery
 from config.strings import *
 from config.callback_models.edu_level_callback import EduLevel
 from config.database import user_queries as uq
+from config.database import volunteer_queries as vq
 from config.cache import redis as rd
 
 @user_router.message(Signup.phone, F.content_type.in_({'contact'}))
-async def handle_phone(message: Message, state: FSMContext, conn: any):
+async def handle_phone(message: Message, state: FSMContext, db: any, objects: any):
     await state.update_data(phone=message.contact.phone_number)
     await state.update_data(username= message.from_user.username if message.from_user.username else "-")
     
@@ -21,20 +22,16 @@ async def handle_phone(message: Message, state: FSMContext, conn: any):
                            text=f"{html.bold(html.italic('Сохраняем пользователя...'))}")
     
     data = await state.get_data()
-    uid = await uq.create_user(conn, data['phone'], data['username'], message.chat.id)
+    user = await uq.add_user(message.from_user.username, message.contact.phone_number,
+                            message.from_user.id,
+                            objects)
 
-    if uid:
-        await state.set_state(Signup.name)
-        await state.update_data(user_id=uid)
-        await bot.send_message(text='Отлично, отправьте полное имя (Включая отчество, если есть)',
+    await state.set_state(Signup.name)
+    await state.update_data(user_id=user.id)
+    await bot.send_message(text='Отлично, отправьте полное имя (Включая отчество, если есть)',
                            chat_id=message.chat.id,
                            reply_markup=ReplyKeyboardRemove())    
-    else:
-        await bot.send_message(chat_id=message.chat.id,
-                               text=f"{html.bold(html.italic('Что-то пошло не так... пробуем снова'))}")
-        await bot.send_message(chat_id=message.chat.id,
-                               text=f"Отправьте телефон еще раз",
-                               reply_markup=start_markup_new())
+   
 
 @user_router.message(Signup.name, F.content_type.in_({'text'}))
 async def handle_name(message: Message, state: FSMContext):
@@ -61,23 +58,36 @@ async def handle_edu_course(message: Message, state: FSMContext):
                            text="Введи название своей ОП (образовательной программы)")
     
 @user_router.message(Signup.edu_prog)
-async def handle_edu_prog(message: Message, conn: any, state: FSMContext):
+async def handle_edu_prog(message: Message, db: any, objects: any, state: FSMContext):
     # saving data, finishin state
     await state.update_data(program=message.text)
     data = await state.get_data()
     await state.clear()
-
     await bot.send_message(chat_id=message.chat.id,
                            text=f"{html.bold(html.italic('Регистрируем...'))}")
-    
     # request to save volunteer
-    # vid = uq.create_volunteer(conn, data['user_id'], data)
-    
-    await rd.set_user_cache(telegram_id=message.chat.id)
+    full_name = str(data['name']).split(" ")
+    name = full_name[1] if len(full_name) > 1 else "-"
+    middlename = full_name[2] if len(full_name) > 3 else "-"
+    surname = full_name[0] if len(full_name) > 2 else "-"
 
+    volunteer = await vq.create_volunteer(
+        message.from_user.id,
+        vol_info={
+            "name": name,
+            "surname": surname,
+            "middlename": middlename,
+            "education_type": data['level'],
+            "education_program": data['program'],
+            "course_number": data['course'],
+            "email": "test@edu.hse.ru"
+        },
+        objects=objects
+    )
+    await rd.set_user_cache(telegram_id=message.chat.id)
     await bot.send_message(chat_id=message.from_user.id,
                            # работа с бдшкой, вставить пользователя 
-                           text=f"{greetings_name} {html.bold('UNKNOWN')}!\n\n{greetings_action}",
+                           text=f"{greetings_name} {html.bold(volunteer.name)}!\n\n{greetings_action}",
                            reply_markup=start_markup_logged())
 
 

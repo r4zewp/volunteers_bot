@@ -1,5 +1,5 @@
 from peewee import Model, CharField, IntegerField, AutoField, BigIntegerField, DateField, TextField, BooleanField
-from database import db
+from config.database.database import db
 
 class Event(Model):
     e_id = AutoField()

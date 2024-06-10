@@ -1,7 +1,7 @@
 from peewee import Model, CharField, IntegerField, AutoField, BigIntegerField, DateField, TextField, BooleanField, ForeignKeyField
-from database import db
-from models.Event import Event
-from models.Volunteer import Volunteer
+from config.database.database import db
+from config.models.Event import Event
+from config.models.Volunteer import Volunteer
 
 class Volunteer_X_Event(Model):
     id = AutoField()

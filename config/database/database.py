@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import asyncpg
 from peewee import PostgresqlDatabase
 import peewee_async
+from peewee_migrate import Router
 
 load_dotenv()
 

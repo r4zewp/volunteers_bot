@@ -1,14 +1,14 @@
 from peewee import Model, CharField, IntegerField, AutoField, BigIntegerField, ForeignKeyField
-from database import db
-from models.User import User
+from config.database.database import db
+from config.models.User import User
 
 class Volunteer(Model):
     v_id = AutoField()
     user = ForeignKeyField(User, backref='volunteers')
     name = CharField()
-    surename = CharField()
+    surname = CharField()
     middlename = CharField()
-    education_typer = CharField()
+    education_type = CharField()
     education_program = CharField()
     course_number = IntegerField()
     email = CharField()
