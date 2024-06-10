@@ -19,35 +19,35 @@ async def handle_name(message: Message, state: FSMContext, db: any, objects: any
     await state.update_data(name=message.text)
     await state.set_state(NewProject.description)
     await bot.send_message(text='Введите подробное описание проекта',
-                           chat_id=message.chat.id,)
+                           chat_id=message.chat.id)
 
 @user_router.message(NewProject.description, F.content_type.in_({'text'}))
 async def handle_description(message: Message, state: FSMContext, db: any, objects: any):
     await state.update_data(description=message.text)
     await state.set_state(NewProject.start_date)
     await bot.send_message(text='Выберите дату старта проекта',
-                           chat_id=message.chat.id,)
+                           chat_id=message.chat.id)
 
 @user_router.message(NewProject.start_date, F.content_type.in_({'text'}))
 async def handle_sdate(message: Message, state: FSMContext, db: any, objects: any):
     await state.update_data(start_date=message.text)
     await state.set_state(NewProject.end_date)
     await bot.send_message(text='Выберите дату окончания проекта',
-                           chat_id=message.chat.id,)
+                           chat_id=message.chat.id)
     
 @user_router.message(NewProject.end_date_date, F.content_type.in_({'text'}))
 async def handle_edate(message: Message, state: FSMContext, db: any, objects: any):
     await state.update_data(end_date=message.text)
     await state.set_state(NewProject.location)
     await bot.send_message(text='Укажите место проведения проекта',
-                           chat_id=message.chat.id,)
+                           chat_id=message.chat.id)
     
 @user_router.message(NewProject.location, F.content_type.in_({'text'}))
 async def handle_loc(message: Message, state: FSMContext, db: any, objects: any):
     await state.update_data(location=message.text)
     await state.set_state(NewProject.credits_amount)
     await bot.send_message(text='Укажите коллиство кредитов за проект',
-                           chat_id=message.chat.id,)
+                           chat_id=message.chat.id)
    
 
 @user_router.message(NewProject.credits_amount, F.content_type.in_({'text'}))
@@ -55,14 +55,14 @@ async def handle_cred_amount(message: Message, state: FSMContext, db: any, objec
     await state.update_data(credits_amount=message.text)
     await state.set_state(NewProject.organization)
     await bot.send_message(text='Укажите наименование организации',
-                           chat_id=message.chat.id,)
+                           chat_id=message.chat.id)
     
 @user_router.message(NewProject.organization, F.content_type.in_({'text'}))
 async def handle_org(message: Message, state: FSMContext, db: any, objects: any):
     await state.update_data(organization=message.text)
     await state.set_state(NewProject.hours_amount)
     await bot.send_message(text='Укажите требуемое коллиство часов на проекте',
-                           chat_id=message.chat.id,)
+                           chat_id=message.chat.id)
     
 @user_router.message(NewProject.hours_amount, F.content_type.in_({'text'}))
 async def handle_hours_amount(message: Message, state: FSMContext, db: any, objects: any):
