@@ -90,8 +90,6 @@ async def handle_edu_prog(message: Message, db: any, objects: any, state: FSMCon
                            text=f"{greetings_name} {html.bold(volunteer.name)}!\n\n{greetings_action}",
                            reply_markup=start_markup_logged())
 
-
-
 @user_router.message(Signup.phone, F.content_type.is_not({'text'}))
 async def handle_name_wrong(message: Message, state: FSMContext):
     await message.reply(text="Я не понимаю такого")
