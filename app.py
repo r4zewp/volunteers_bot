@@ -49,7 +49,7 @@ async def command_start_handler(message: Message, db: any, objects: any, state: 
                 
                 if volunteer:
                     await bot.send_message(chat_id=message.from_user.id, 
-                                    text=f"{greetings_name} {html.bold(volunteer)}!\n\n{greetings_action}",
+                                    text=f"{greetings_name} {html.bold(volunteer.name)}!\n\n{greetings_action}",
                                     reply_markup=start_markup_logged())
                 else:
                     await state.set_state(Signup.phone)
@@ -75,7 +75,7 @@ async def command_start_handler(message: Message, db: any, objects: any, state: 
                 if volunteer:
                     await redis.setex(user_key, 9999, message.chat.id)
                     await bot.send_message(chat_id=message.from_user.id, 
-                                    text=f"{greetings_name} {html.bold(volunteer)}!\n\n{greetings_action}",
+                                    text=f"{greetings_name} {html.bold(volunteer.name)}!\n\n{greetings_action}",
                                     reply_markup=start_markup_logged())
                     
                 else:
