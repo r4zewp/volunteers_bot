@@ -1,7 +1,7 @@
 import asyncpg
 from config.models.Event import Event
 
-async def get_active_events(objects) -> list[Event] | None:
+async def get_active_events(objects) -> list[Event]:
     try:
         events = await objects.execute(Event.select().where(Event.active == True))
         return events
