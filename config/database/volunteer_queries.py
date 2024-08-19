@@ -35,7 +35,7 @@ async def get_volunteer_by_id(v_id):
         return None
 
 # Асинхронная функция для получения всех волонтеров
-async def get_all_volunteers():
+async def get_all_volunteers(objects):
     try:
         volunteers = await objects.execute(Volunteer.select())
         return volunteers

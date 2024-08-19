@@ -14,6 +14,11 @@ from config.cache import redis as rd
 from state_groups.NewProject import NewProject
 from config.database.events_queries import *
 
+@user_router.message(F.text == "Создать проект")
+async def create_project(message: Message, objects: any):
+    await bot.send_message(chat_id=message.from_user.id,
+                           text='Введите название проекта')
+
 @user_router.message(NewProject.name, F.content_type.in_({'text'}))
 async def handle_name(message: Message, state: FSMContext, db: any, objects: any):
     await state.update_data(name=message.text)
@@ -35,7 +40,7 @@ async def handle_sdate(message: Message, state: FSMContext, db: any, objects: an
     await bot.send_message(text='Выберите дату окончания проекта',
                            chat_id=message.chat.id,)
     
-@user_router.message(NewProject.end_date_date, F.content_type.in_({'text'}))
+@user_router.message(NewProject.end_date, F.content_type.in_({'text'}))
 async def handle_edate(message: Message, state: FSMContext, db: any, objects: any):
     await state.update_data(end_date=message.text)
     await state.set_state(NewProject.location)
@@ -46,7 +51,7 @@ async def handle_edate(message: Message, state: FSMContext, db: any, objects: an
 async def handle_loc(message: Message, state: FSMContext, db: any, objects: any):
     await state.update_data(location=message.text)
     await state.set_state(NewProject.credits_amount)
-    await bot.send_message(text='Укажите коллиство кредитов за проект',
+    await bot.send_message(text='Укажите количество кредитов за проект',
                            chat_id=message.chat.id,)
    
 

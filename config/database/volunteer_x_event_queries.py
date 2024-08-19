@@ -1,12 +1,11 @@
 import asyncpg
-from models.User import User
-from models.Volunteer import Volunteer
-from models.Volunteer_X_Event import Volunteer_X_Event
-from models.Event import Event
-from user_queries import get_user_by_id
-from database import objects
+from config.models.User import User
+from config.models.Volunteer import Volunteer
+from config.models.Volunteer_X_Event import Volunteer_X_Event
+from config.models.Event import Event
+from config.database.user_queries import get_user_by_id
 
-async def create_volunteer_x_event(volunteer_id, event_id):
+async def create_volunteer_x_event(volunteer_id, event_id, objects):
     try:
         volunteer = await objects.get(Volunteer, Volunteer.v_id == volunteer_id)
         event = await objects.get(Event, Event.e_id == event_id)
@@ -14,7 +13,9 @@ async def create_volunteer_x_event(volunteer_id, event_id):
             Volunteer_X_Event,
             volunteer=volunteer,
             event=event,
-            hours_credited=0
+            hours_credited=0,
+            approved=False,
+            appeared=False
         )
         return volunteer_x_event
     except Volunteer.DoesNotExist:
@@ -28,9 +29,9 @@ async def create_volunteer_x_event(volunteer_id, event_id):
         return None
     
 # Асинхронная функция для подтверждения волонтера на событии
-async def approve_volunteer_on_event(vxe_id):
+async def approve_volunteer_on_event(vxe_id, objects):
     try:
-        volunteer_x_event = await objects.get(Volunteer_X_Event, Volunteer_X_Event.vxe_id == vxe_id)
+        volunteer_x_event = await objects.get(Volunteer_X_Event, Volunteer_X_Event.id == vxe_id)
         volunteer_x_event.approved = True
         await objects.update(volunteer_x_event)
         return volunteer_x_event
@@ -42,9 +43,9 @@ async def approve_volunteer_on_event(vxe_id):
         return None
     
 # Асинхронная функция для отказа волонтеру на событии
-async def decline_volunteer_on_event(vxe_id):
+async def decline_volunteer_on_event(vxe_id, objects):
     try:
-        volunteer_x_event = await objects.get(Volunteer_X_Event, Volunteer_X_Event.vxe_id == vxe_id)
+        volunteer_x_event = await objects.get(Volunteer_X_Event, Volunteer_X_Event.id == vxe_id)
         volunteer_x_event.approved = False
         await objects.update(volunteer_x_event)
         return volunteer_x_event
@@ -56,7 +57,7 @@ async def decline_volunteer_on_event(vxe_id):
         return None
     
 # Асинхронная функция для изменения значения свойства hours_credited
-async def update_hours_credited(vxe_id, new_hours_credited):
+async def update_hours_credited(vxe_id, new_hours_credited, objects):
     try:
         volunteer_x_event = await objects.get(Volunteer_X_Event, Volunteer_X_Event.vxe_id == vxe_id)
         volunteer_x_event.hours_credited = new_hours_credited
@@ -70,7 +71,7 @@ async def update_hours_credited(vxe_id, new_hours_credited):
         return None
     
 # Асинхронная функция для подтверждения волонтера на событии
-async def confirm_volunteer_appearance(vxe_id):
+async def confirm_volunteer_appearance(vxe_id, objects):
     try:
         volunteer_x_event = await objects.get(Volunteer_X_Event, Volunteer_X_Event.vxe_id == vxe_id)
         volunteer_x_event.appeared = True
@@ -85,7 +86,7 @@ async def confirm_volunteer_appearance(vxe_id):
 
 
 # Асинхронная функция для получения всех записей Volunteer_X_Event по конкретному волонтеру
-async def get_volunteer_x_events_by_volunteer(volunteer_id):
+async def get_volunteer_x_events_by_volunteer(volunteer_id, objects):
     try:
         volunteer = await objects.get(Volunteer, Volunteer.v_id == volunteer_id)
         volunteer_x_events = await objects.execute(Volunteer_X_Event.select().where(Volunteer_X_Event.volunteer == volunteer))
@@ -103,7 +104,7 @@ async def get_volunteer_x_events_by_volunteer(volunteer_id):
         return None
 
 # Асинхронная функция для получения всех записей Volunteer_X_Event, у которых appeared = True
-async def get_appeared_volunteer_x_events():
+async def get_appeared_volunteer_x_events(objects):
     try:
         volunteer_x_events = await objects.execute(Volunteer_X_Event.select().where(Volunteer_X_Event.appeared == True))
         

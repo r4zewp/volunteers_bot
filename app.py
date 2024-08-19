@@ -2,6 +2,7 @@ from loader import *
 
 # database
 from config.database import user_queries as uq
+from config.database import events_queries as eq
 from config.database import volunteer_queries as vq
 from config.cache.redis import get_redis
 from config.models.User import User
@@ -9,12 +10,17 @@ from config.models.Volunteer import Volunteer
 from config.models.Event import Event
 from config.models.Volunteer_X_Event import Volunteer_X_Event
 
+from keyboards.deactivate_project_markup import deactivate_project_markup
+from config.callback_models.deactivate_callback import Deactivate
+
 # handlers
 ## user
 from handlers.user import profile_handler
 from handlers.user import grades_handler
 from handlers.user import projects_handler
 from handlers.user import signup_handler
+from handlers.user import admin_projects_handler
+from handlers.admin import create_project_handler
 
 ## admin
 
@@ -23,10 +29,23 @@ from handlers.user import signup_handler
 # keyboards
 from keyboards.start_markup_logged import start_markup_logged
 from keyboards.start_markup_new import start_markup_new
+from keyboards.create_admin_menu import create_admin_kb
 
 # config
 from config.strings import *
 from config.database.database import create_pool
+
+@user_router.message(Command('admin'))
+async def handle_command(message: Message, db: any, objects: any):
+    user = await uq.get_user_by_id(message.from_user.id,
+                            objects=objects)
+    if user.is_admin:
+        await bot.send_message(chat_id=message.from_user.id, 
+                               text='Меню управления',
+                               reply_markup=create_admin_kb())
+    else:
+        await bot.send_message(chat_id=message.from_user.id,
+                               text='У вас нет доступа к этой команде')
 
 @user_router.message(CommandStart())
 async def command_start_handler(message: Message, db: any, objects: any, state: FSMContext) -> None:
@@ -94,13 +113,14 @@ async def command_start_handler(message: Message, db: any, objects: any, state: 
 
     except Exception as e:
         print(e)
-    
-# handling unknown messages
 
-@user_router.message()
-async def handle_unknown(message: Message) -> None:
-    await bot.send_message(chat_id=message.chat.id,
-                           text=unknown)
+
+@user_router.callback_query(Deactivate.filter())
+async def deactivate_project(message: Message, callback_data: Deactivate, objects: any):
+    project_id = callback_data.deactivate.split("_")[1]
+    
+
+
 
 async def main(): 
     dp = Dispatcher()
@@ -111,6 +131,7 @@ async def main():
         db.create_tables([User, Volunteer, Event, Volunteer_X_Event])
 
     user_router.message.middleware(middleware.DbMiddleware(db=db, objects=objects))
+    user_router.callback_query.middleware(middleware.DbMiddleware(db=db, objects=objects))
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
