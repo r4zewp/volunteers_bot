@@ -116,3 +116,17 @@ async def get_appeared_volunteer_x_events(objects):
     except Exception as e:
         print(f"Error: {e}")
         return None
+    
+# Асинхронная функция для проверки существования записи Volunteer_X_Event
+async def check_volunteer_x_event_exists(volunteer_id, event_id):
+    try:
+        volunteer_x_event = await objects.get(
+            Volunteer_X_Event, 
+            (Volunteer_X_Event.volunteer == volunteer_id) & (Volunteer_X_Event.event == event_id)
+        )
+        return True
+    except Volunteer_X_Event.DoesNotExist:
+        return False
+    except Exception as e:
+        print(f"Error: {e}")
+        return False
